@@ -361,6 +361,17 @@ fn layout_messages(
     }
 }
 
+fn message_fading(
+    mut messages: Query<(&mut Text, &mut Message)>,
+    time: Res<Time>,
+) {
+    for (mut ui_text, message) in messages.iter_mut() {
+        let t = message.expiration as f32 - time.elapsed_seconds();
+        let a = 1.0 - ((message.lifetime - t) / message.lifetime / 1.25);
+        ui_text.sections[0].style.color.set_a(a);
+    }
+}
+
 /// The text overlay plugin, you must add this plugin for the [`screen_print!`] macro
 /// to work.
 ///
@@ -396,6 +407,7 @@ impl Plugin for OverlayPlugin {
         app.insert_resource::<Options>(self.into())
             .init_resource::<OverlayFont>()
             .add_system(layout_messages)
-            .add_system(update_messages_as_per_commands.before(layout_messages));
+            .add_system(update_messages_as_per_commands.before(layout_messages))
+            .add_system(message_fading.after(update_messages_as_per_commands));
     }
 }
