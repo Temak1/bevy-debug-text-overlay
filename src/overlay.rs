@@ -205,10 +205,14 @@ impl CommandChannels {
 #[derive(Component)]
 struct Message {
     expiration: f64,
+    lifetime: f32,
 }
 impl Message {
-    fn new(expiration: f64) -> Self {
-        Self { expiration }
+    fn new(expiration: f64, lifetime: f32) -> Self {
+        Self { 
+            expiration,
+            lifetime,
+        }
     }
 }
 
@@ -296,7 +300,7 @@ fn update_messages_as_per_commands(
         let style = Style { position_type: PositionType::Absolute, ..default() };
         cmds.spawn((
             TextBundle::from_section(text, text_style(color)).with_style(style),
-            Message::new(timeout + current_time),
+            Message::new(timeout + current_time, timeout as f32),
         ))
         .insert(Visibility::Hidden)
         .id()
