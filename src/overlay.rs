@@ -408,6 +408,6 @@ impl Plugin for OverlayPlugin {
             .init_resource::<OverlayFont>()
             .add_system(layout_messages)
             .add_system(update_messages_as_per_commands.before(layout_messages))
-            .add_system(message_fading.after(update_messages_as_per_commands));
+            .add_system(message_fading.after(layout_messages));
     }
 }
